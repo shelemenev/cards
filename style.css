@@ -4,22 +4,28 @@
   border: 0px;
 }
 
-.card {
+.card_unknown, .card {
   height: 140px;
   width: 100px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-left: 10px;
-  background-image: url('deck.png');
+  margin-left: 5px;
+  margin-right: 5px;
+  background-image: url('01.jpg');
+  border-radius: 5px;
   overflow: hidden;
+}
+
+.card {
+  background: url('deck.png');
 }
 
 .opponent {
   height: 25%;
   width: 100%;
-  background-color: green;
+  background-color: seagreen;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -33,9 +39,8 @@
 }
 
 .field {
-  height: 100%;
   width: 80%;
-  background-color: blue;
+  background-image: url('table.jpg');
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -45,7 +50,7 @@
 .my {
   height: 25%;
   width: 100%;
-  background-color: red;
+  background-color: seagreen;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -55,7 +60,7 @@
 .kozyr, .empty {
   height: 100%;
   width: 20%;
-  background-color: yellow;
+  background-image: url('02.jpeg');
   display: flex;
   flex-direction: row;
   align-items: center;
