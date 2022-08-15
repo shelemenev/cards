@@ -90,10 +90,93 @@ function myFirstMove(event) {
 
 function myReply(event) {
   const div = event.target
+  const kozyrdiv = document.querySelector('.kozyr div')
+  const cardToBeat = document.querySelectorAll('.field div')[document.querySelectorAll('.field div').length - 1]
+
+  if (div.getAttribute('data-mast') === cardToBeat.getAttribute('data-mast')
+      && div.getAttribute('data-value') < cardToBeat.getAttribute('data-value')) {
+    document.querySelector('.my').removeChild(div)
+    document.querySelector('.field').appendChild(div)
+    div.removeEventListener('click', myReply)
+    setTimeout(() => checkCardsOpponent(), 500)
+  }
+
+  if (cardToBeat.getAttribute('data-mast') !== kozyrdiv.getAttribute('data-mast')
+      && div.getAttribute('data-mast') === kozyrdiv.getAttribute('data-mast')) {
+    document.querySelector('.my').removeChild(div)
+    document.querySelector('.field').appendChild(div)
+    div.removeEventListener('click', myReply)
+    setTimeout(() => checkCardsOpponent(), 500)
+  } 
 }
 
 function myContinue(event) {
   const div = event.target
+  const cardsInField = document.querySelectorAll('.field div')
+
+  for (let i = 0; i < cardsInField.length; ++i) {
+    if (div.getAttribute('data-value') === cardsInField[i].getAttribute('data-value')) {
+      document.querySelector('.my').removeChild(div)
+      document.querySelector('.field').appendChild(div)
+      setTimeout(() => checkCardsOpponent(), 500)
+    }
+  }
+}
+
+function takeCards() {
+  const cardToBeat = document.querySelectorAll('.field div')[document.querySelectorAll('.field div').length - 1]
+  const myDivs = document.querySelectorAll('.my div')
+  const kozyrdiv = document.querySelector('.kozyr div')
+  let canIBeat = false
+
+  for (let i = 0; i < myDivs.length; ++i) {
+    if (myDivs[i].getAttribute('data-mast') === cardToBeat.getAttribute('data-mast')
+       && myDivs[i].getAttribute('data-value') < cardToBeat.getAttribute('data-value')) {
+      canIBeat = true
+      break
+    }
+
+    if (myDivs[i].getAttribute('data-mast') === kozyrdiv.getAttribute('data-mast')
+        && cardToBeat.getAttribute('data-mast') !== kozyrdiv.getAttribute('data-mast')) {
+      canIBeat = true
+      break
+    }
+  }
+
+  if (canIBeat === false) {
+    const fieldDivs = document.querySelectorAll('.field div')
+
+    for (let i = 0; i < fieldDivs.length; ++i) {
+      document.querySelector('.field').removeChild(fieldDivs[i])
+      document.querySelector('.my').appendChild(fieldDivs[i])
+      fieldDivs[i].addEventListener('click', checkCards)
+    }
+
+    setTimeout(() => checkCardsOpponent(), 500)
+  }
+}
+
+function flushCards() {
+  const fieldDivs = document.querySelectorAll('.field div')
+  const myDivs = document.querySelectorAll('.my div')
+  let canIContinue = false
+
+  for (let i = 0; i < myDivs.length; ++i) {
+    for (let j = 0; j < fieldDivs.length; ++j) {
+      if (myDivs[i].getAttribute('data-value') === fieldDivs[j].getAttribute('data-value')) {
+        canIContinue = true
+        break
+      }
+    }
+  }
+
+  if (canIContinue === false) {
+    for (let i = 0; i < fieldDivs.length; ++i) {
+      document.querySelector('.field').removeChild(fieldDivs[i])
+    }
+
+    setTimeout(() => checkCardsOpponent(), 500)
+  }
 }
 
 function checkCardsOpponent(event) {
@@ -123,6 +206,7 @@ function opponentFirstMove() {
 
   document.querySelector('.opponent').removeChild(minCardDiv)
   document.querySelector('.field').appendChild(minCardDiv)
+  setTimeout(() => takeCards(), 500)
 }
 
 function opponentReply() {
@@ -150,6 +234,7 @@ function opponentReply() {
   if (div) {
     document.querySelector('.opponent').removeChild(div)
     document.querySelector('.field').appendChild(div)
+    setTimeout(() => flushCards(), 500)
   } else {
     const fieldDivs = document.querySelectorAll('.field div')
     
@@ -187,21 +272,14 @@ function opponentContinue() {
   if (div) {
     document.querySelector('.opponent').removeChild(div)
     document.querySelector('.field').appendChild(div)
+    setTimeout(() => takeCards(), 500)
   } else {
     const fieldDivs = document.querySelectorAll('.field div')
     
     for (let i = 0; i < fieldDivs.length; ++i) {
       document.querySelector('.field').removeChild(fieldDivs[i])
     }   
-  } 
-}
-
-function checkStep() {
-  const divs = document.querySelectorAll('.field div')
-  const opponentValue = divs[divs.length - 1].getAttribute('data-value')
-  const myValue = divs[divs.length - 2].getAttribute('data-value')
-
-
+  }
 }
 
 function checkWin() {
