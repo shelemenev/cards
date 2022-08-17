@@ -44,6 +44,7 @@ function moreCards() {
   const opponentdivsCount = document.querySelectorAll('.opponent div').length
   showCards('.my', 6 - mydivsCount)
   showCards('.opponent', 6 - opponentdivsCount)
+  checkWin()
 }
 
 function choiceStep() {
@@ -89,7 +90,6 @@ function myFirstMove(event) {
   document.querySelector('.my').removeChild(div)
   document.querySelector('.field').appendChild(div)
   div.removeEventListener('click', checkCards)
-  document.querySelector('.button').style.display = 'none'
   setTimeout(() => checkCardsOpponent(), 500)
 }
 
@@ -210,15 +210,14 @@ function checkCardsOpponent(event) {
 function opponentFirstMove() {
   const divs = document.querySelectorAll('.opponent div')
   const kozyrdiv = document.querySelector('.kozyr div')
-  let minCard = -1
-  let minCardDiv = null
+  let minCardDiv = divs[0]
 
-  for (let i = 0; i < divs.length; ++i) {
-    if (divs[i].getAttribute('data-mast') !== kozyrdiv.getAttribute('data-mast') && divs[i].getAttribute('data-value') > minCard) {
-      minCard = divs[i].getAttribute('data-value')
+  for (let i = 1; i < divs.length; ++i) {
+    if (divs[i].getAttribute('data-mast') !== kozyrdiv.getAttribute('data-mast') && divs[i].getAttribute('data-value') > minCardDiv.getAttribute('data-value')) {
       minCardDiv = divs[i]
     }
   }
+
   document.querySelector('.opponent').removeChild(minCardDiv)
   document.querySelector('.field').appendChild(minCardDiv)
   document.querySelector('.button').style.display = 'none'
@@ -267,22 +266,25 @@ function opponentContinue() {
   const divs = document.querySelectorAll('.opponent div')
   const kozyrdiv = document.querySelector('.kozyr div')
   const cardsInField = document.querySelectorAll('.field div')
+  const myDivs = document.querySelectorAll('.my div')
   let minCardDiv, minCardKozyrDiv
 
-  for (let i = 0; i < divs.length; ++i) {
-    for (let j = 0; j < cardsInField.length; ++j) {
-      const cardToContinue = cardsInField[j]
-      if (kozyrdiv.getAttribute('data-mast') !== divs[i].getAttribute('data-mast')
-          && divs[i].getAttribute('data-value') === cardToContinue.getAttribute('data-value') 
-          && (!minCardDiv || divs[i].getAttribute('data-value') > minCardDiv.getAttribute('data-value'))) {
-        minCardDiv = divs[i]
-      } else if (kozyrdiv.getAttribute('data-mast') === divs[i].getAttribute('data-mast')
-          && divs[i].getAttribute('data-value') === cardToContinue.getAttribute('data-value') 
-          && (!minCardKozyrDiv || divs[i].getAttribute('data-value') > minCardKozyrDiv.getAttribute('data-value'))) {
-        minCardKozyrDiv = divs[i]
+  if (myDivs.length > 0) {
+    for (let i = 0; i < divs.length; ++i) {
+      for (let j = 0; j < cardsInField.length; ++j) {
+        const cardToContinue = cardsInField[j]
+        if (kozyrdiv.getAttribute('data-mast') !== divs[i].getAttribute('data-mast')
+            && divs[i].getAttribute('data-value') === cardToContinue.getAttribute('data-value') 
+            && (!minCardDiv || divs[i].getAttribute('data-value') > minCardDiv.getAttribute('data-value'))) {
+          minCardDiv = divs[i]
+        } else if (kozyrdiv.getAttribute('data-mast') === divs[i].getAttribute('data-mast')
+            && divs[i].getAttribute('data-value') === cardToContinue.getAttribute('data-value') 
+            && (!minCardKozyrDiv || divs[i].getAttribute('data-value') > minCardKozyrDiv.getAttribute('data-value'))) {
+          minCardKozyrDiv = divs[i]
+        }
       }
     }
-  }  
+  }
 
   const random = Math.random()
   const div = minCardDiv || (random > 0.5 ? minCardKozyrDiv : null)
@@ -308,10 +310,10 @@ function checkWin() {
   const mydivs = document.querySelectorAll('.my div')
   const opponentdivs = document.querySelectorAll('.opponent div')
 
-  if (mydivs.length === 0) {
+  if (mydivs.length === 0 && cards.length === 0) {
     alert('Вы выиграли!')
     location.reload()  
-  } else if (opponentdivs.length === 0) {
+  } else if (opponentdivs.length === 0 && cards.length === 0) {
     alert('Вы проиграли!')
     location.reload()
   }
