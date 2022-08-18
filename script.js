@@ -34,16 +34,48 @@ function showCards(className, count) {
     document.querySelector(className).appendChild(div)
 
     if (className === '.opponent') {
-      //div.className = 'card_unknown'
+      div.className = 'card_unknown'
     }
   }
 }
 
+function createDuplicate (div) {
+  const newDiv = document.createElement('div')
+  newDiv.className = div.className
+  newDiv.setAttribute('data-mast', div.getAttribute('data-mast'))
+  newDiv.setAttribute('data-value', div.getAttribute('data-value'))
+  newDiv.innerHTML = div.innerHTML
+  newDiv.style.backgroundPosition = div.style.backgroundPosition
+  return newDiv
+}
+
 function moreCards() {
-  const mydivsCount = document.querySelectorAll('.my div').length
-  const opponentdivsCount = document.querySelectorAll('.opponent div').length
+  let mydivsCount = document.querySelectorAll('.my div').length
+  let opponentdivsCount = document.querySelectorAll('.opponent div').length
   showCards('.my', 6 - mydivsCount)
   showCards('.opponent', 6 - opponentdivsCount)
+
+  mydivsCount = document.querySelectorAll('.my div').length
+  const kozyrdiv = document.querySelector('.kozyr div')
+  let kozyrApplied = kozyrdiv.style.opacity === '0'
+
+  if (! kozyrApplied && kozyrdiv && mydivsCount < 6) {
+    kozyrdiv.style.opacity = '0'
+    const newDiv = createDuplicate(kozyrdiv)
+    document.querySelector('.my').appendChild(newDiv)
+    newDiv.addEventListener('click', checkCards)
+    kozyrApplied = true
+  }
+
+  opponentdivsCount = document.querySelectorAll('.opponent div').length
+
+  if (! kozyrApplied && kozyrdiv && opponentdivsCount < 6) {
+    kozyrdiv.style.opacity = '0'
+    const newDiv = createDuplicate(kozyrdiv)
+    document.querySelector('.opponent').appendChild(newDiv)
+    newDiv.className = 'card_unknown'
+  }
+
   checkWin()
 }
 
@@ -90,6 +122,7 @@ function myFirstMove(event) {
   document.querySelector('.my').removeChild(div)
   document.querySelector('.field').appendChild(div)
   div.removeEventListener('click', checkCards)
+  document.querySelector('.button_1').style.display = 'none'
   setTimeout(() => checkCardsOpponent(), 500)
 }
 
@@ -104,6 +137,7 @@ function myReply(event) {
     document.querySelector('.field').appendChild(div)
     div.removeEventListener('click', myReply)
     document.querySelector('.button').style.display = 'none'
+    document.querySelector('.button_1').style.display = 'none'
     setTimeout(() => checkCardsOpponent(), 500)
   }
 
@@ -111,8 +145,9 @@ function myReply(event) {
       && div.getAttribute('data-mast') === kozyrdiv.getAttribute('data-mast')) {
     document.querySelector('.my').removeChild(div)
     document.querySelector('.field').appendChild(div)
-    document.querySelector('.button').style.display = 'none'
     div.removeEventListener('click', myReply)
+    document.querySelector('.button').style.display = 'none'
+    document.querySelector('.button_1').style.display = 'none'
     setTimeout(() => checkCardsOpponent(), 500)
   } 
 }
@@ -126,9 +161,25 @@ function myContinue(event) {
       document.querySelector('.my').removeChild(div)
       document.querySelector('.field').appendChild(div)
       document.querySelector('.button').style.display = 'none'
+      document.querySelector('.button_1').style.display = 'none'
       setTimeout(() => checkCardsOpponent(), 500)
     }
   }
+}
+
+function take() {
+  const fieldDivs = document.querySelectorAll('.field div')
+  const myDivs = document.querySelectorAll('.my div')
+
+  for (let i = 0; i < fieldDivs.length; ++i) {
+    document.querySelector('.field').removeChild(fieldDivs[i])
+    document.querySelector('.my').appendChild(fieldDivs[i])
+    fieldDivs[i].addEventListener('click', checkCards)
+    document.querySelector('.button_1').style.display = 'none'
+  }
+
+  moreCards()
+  setTimeout(() => checkCardsOpponent(), 500)
 }
 
 function takeCards() {
@@ -152,16 +203,7 @@ function takeCards() {
   }
 
   if (canIBeat === false) {
-    const fieldDivs = document.querySelectorAll('.field div')
-
-    for (let i = 0; i < fieldDivs.length; ++i) {
-      document.querySelector('.field').removeChild(fieldDivs[i])
-      document.querySelector('.my').appendChild(fieldDivs[i])
-      fieldDivs[i].addEventListener('click', checkCards)
-    }
-
-    moreCards()
-    setTimeout(() => checkCardsOpponent(), 500)
+    take()
   }
 }
 
@@ -220,7 +262,9 @@ function opponentFirstMove() {
 
   document.querySelector('.opponent').removeChild(minCardDiv)
   document.querySelector('.field').appendChild(minCardDiv)
+  minCardDiv.className = 'card'
   document.querySelector('.button').style.display = 'none'
+  document.querySelector('.button_1').style.display = 'block'
   setTimeout(() => takeCards(), 500)
 }
 
@@ -249,7 +293,9 @@ function opponentReply() {
   if (div) {
     document.querySelector('.opponent').removeChild(div)
     document.querySelector('.field').appendChild(div)
+    div.className = 'card'
     document.querySelector('.button').style.display = 'block'
+    document.querySelector('.button_1').style.display = 'none'
     setTimeout(() => flushCards(), 500)
   } else {
     const fieldDivs = document.querySelectorAll('.field div')
@@ -257,6 +303,7 @@ function opponentReply() {
     for (let i = 0; i < fieldDivs.length; ++i) {
       document.querySelector('.field').removeChild(fieldDivs[i])
       document.querySelector('.opponent').appendChild(fieldDivs[i])
+      fieldDivs[i].className = 'card_unknown'
     }
     moreCards()
   }
@@ -292,7 +339,9 @@ function opponentContinue() {
   if (div) {
     document.querySelector('.opponent').removeChild(div)
     document.querySelector('.field').appendChild(div)
+    div.className = 'card'
     document.querySelector('.button').style.display = 'none'
+    document.querySelector('.button_1').style.display = 'block'
     setTimeout(() => takeCards(), 500)
   } else {
     const fieldDivs = document.querySelectorAll('.field div')
@@ -300,6 +349,7 @@ function opponentContinue() {
     for (let i = 0; i < fieldDivs.length; ++i) {
       document.querySelector('.field').removeChild(fieldDivs[i])
       document.querySelector('.button').style.display = 'none'
+      document.querySelector('.button_1').style.display = 'none'
     }
 
     moreCards()
