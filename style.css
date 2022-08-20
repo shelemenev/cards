@@ -31,14 +31,14 @@
   font-size: 28px;
   font-family: PoiretOne-Regular;
   font-weight: bold;
-  color: darkblue;
+  color: darkgreen;
   display: none;
 }
 
 .opponent {
   height: 25%;
   width: 100%;
-  background-image: url('table.jpg');
+  background-image: url('03.jpeg');
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -53,7 +53,7 @@
 
 .field {
   width: 80%;
-  background-color: seagreen;
+  background-image: url('table.jpg');
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -63,7 +63,7 @@
 .my {
   height: 25%;
   width: 100%;
-  background-image: url('table.jpg');
+  background-image: url('03.jpeg');
   display: flex;
   flex-direction: row;
   align-items: center;
