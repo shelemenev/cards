@@ -53,11 +53,16 @@
 
 .field {
   width: 80%;
+  height: 100%;
   background-image: url('table.jpg');
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  border-bottom: 0.01vw solid #d4a515;
+  border-top: 0.01vw solid #d4a515;
+  border-left: 0.01vw solid #d4a515;
+  border-right: 0.01vw solid #d4a515;
 }
 
 .my {
@@ -73,9 +78,11 @@
 .kozyr, .empty {
   height: 100%;
   width: 20%;
-  background-image: url('02.jpeg');
+  background-image: url('03.jpeg');
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  border-bottom: 0.01vw solid #d4a515;
+  border-top: 0.01vw solid #d4a515;
 }
